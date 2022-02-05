@@ -72,3 +72,16 @@ for(i in 1:length(papers)){
           text = element_text(size = 11))
   ggsave(plot, filename = paste("Figs/tf_idf/", papers[i], sep = ""), width = 1000, height = 800, units = "px")
 }
+
+
+# Dendrogram tf-df
+paper_tf_idf_to_clust <- paper_tf_idf %>% 
+  filter(paper != "Part B1_ok.pdf") %>%
+  group_by(paper) %>% 
+  slice_max(tf_idf, n = 15) %>% 
+  select(paper, word)
+
+  
+  
+  
+  
