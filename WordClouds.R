@@ -52,7 +52,7 @@ library(pdftools)
 all_pdfs <- list.files(path = "pdfs/",
                        pattern = ".pdf$")
 
-pdfCorpus <- map_df(all_pdfs, ~ tibble(txt = pdf_text(paste("pdfs/", .x, sep = ""))) %>%
+pdfCorpus <- map_df(all_pdfs[-33], ~ tibble(txt = pdf_text(paste("pdfs/", .x, sep = ""))) %>%
                       mutate(paper = .x) %>%
                       unnest_tokens(word, txt))
 
@@ -597,6 +597,80 @@ wordcloud2(PagesMSCA2021[,1:2], fontFamily = "arial",
            minRotation = 0, maxRotation = 0,
            size = 1)
 
+# 2022_Khamis_et_al_MERE.pdf
+Khamis2022 <- cleancorpus %>%
+  filter(paper == "2022_Khamis_et_al_MERE.pdf") %>% 
+  # filter(paper %in% c("2012_Pagès et al. FuncEcol.pdf",
+  #                     "2010_Pagès et al. JEMBE.pdf",
+  #                     "2013_Gera et al. JEcology.pdf",
+  #                     "2013_Pagès et al. MEPS.pdf",
+  #                     "2013_Pagès et al. PlosOne.pdf",
+  #                     "2014_Gera et al. LimnolOcean.pdf",
+  #                     "2014_Pagès et al. FuncEcol.pdf",
+  #                     "2015_Jahnke et al. JEcology.pdf",
+  #                     "2016_Bakker et al. Ecography.pdf",
+  #                     "2018_Pagès et al. MarinePollution.pdf",
+  #                     "2019_Ladd et al. GRL.pdf",
+  #                     "2019_McKinley et al. EcoServices.pdf",
+  #                     "2019_Pagès et al. Ecosystems.pdf",
+  #                     "2020_Duggan-Edwards_et_al_JAppEcol.pdf",
+  #                     "2020_McKinley_et_al_ECSS.pdf",
+  #                     "2020_McKinley_et_al_OceanCoastMgment.pdf",
+  #                     "2021_Ladd_FrontMarSci.pdf",
+  #                     "2021_Pagès_et_al_MoveEcol.pdf",
+  #                     "Part B1_ok.pdf")) %>% 
+  filter(!word %in% c("https", "pp", "dfss", "dsouza", "muwaylih", "doiorg", "preen", "nasr", "khamis", "aragones")) %>%
+  anti_join(stop_words) %>%
+  count(word) %>% 
+  arrange(desc(n)) %>% 
+  # print(n = 100)
+  filter(n>=12)  
+
+wordcloud2(Khamis2022[,1:2], fontFamily = "arial", 
+           fontWeight ="normal", color = pal_aaas(palette = "default")(10), 
+           minRotation = 0, maxRotation = 0,
+           size = 1)
+
+
+# 2022_Kennedy_et_al_GBC.pdf
+Kennedy2022 <- cleancorpus %>%
+  filter(paper == "2022_Kennedy_et_al_GBC.pdf") %>% 
+  # filter(paper %in% c("2012_Pagès et al. FuncEcol.pdf",
+  #                     "2010_Pagès et al. JEMBE.pdf",
+  #                     "2013_Gera et al. JEcology.pdf",
+  #                     "2013_Pagès et al. MEPS.pdf",
+  #                     "2013_Pagès et al. PlosOne.pdf",
+  #                     "2014_Gera et al. LimnolOcean.pdf",
+  #                     "2014_Pagès et al. FuncEcol.pdf",
+  #                     "2015_Jahnke et al. JEcology.pdf",
+  #                     "2016_Bakker et al. Ecography.pdf",
+  #                     "2018_Pagès et al. MarinePollution.pdf",
+  #                     "2019_Ladd et al. GRL.pdf",
+  #                     "2019_McKinley et al. EcoServices.pdf",
+  #                     "2019_Pagès et al. Ecosystems.pdf",
+  #                     "2020_Duggan-Edwards_et_al_JAppEcol.pdf",
+  #                     "2020_McKinley_et_al_ECSS.pdf",
+  #                     "2020_McKinley_et_al_OceanCoastMgment.pdf",
+  #                     "2021_Ladd_FrontMarSci.pdf",
+  #                     "2021_Pagès_et_al_MoveEcol.pdf",
+  #                     "Part B1_ok.pdf")) %>% 
+  filter(!word %in% c("biogeochemical", "creative", "commons", "license","https", "doiorg", "gb", "kennedy", 
+                      "macreadie", "csic","online", "library", "wiley", "duarte", "δ", "bgb", "cycles", "serrano",
+                      "fourqurean", "agupubsonlinelibrarywileycom", "allochthonous", "applicable", "articles","downloaded",
+                      "governed", "conditions", "terms", "urici", "central", "oa", "oficialia", "onlinelibrarywileycom",
+                      "organización", "pagès", "university", "lavery", "mazarrasa", "mayor", "marbà")) %>%
+    anti_join(stop_words) %>%
+    count(word) %>% 
+    arrange(desc(n)) %>% 
+    # print(n = 100)
+    filter(n>=12)  
+
+wordcloud2(Kennedy2022[,1:2], fontFamily = "arial", 
+           fontWeight ="normal", color = pal_aaas(palette = "default")(10), 
+           minRotation = 0, maxRotation = 0,
+           size = 1)
+
+
 
 # Final
 final <- cleancorpus %>%
@@ -607,13 +681,13 @@ final <- cleancorpus %>%
   count(word) %>% 
   arrange(desc(n)) %>% 
   # print(n = 100)
-  filter(n>=160) #%>% 
+  filter(n>=220) #%>% 
   # mutate(colour = c(pal_aaas(palette = "default")(9), rep("#000000", 61)))
 
 wordcloud2(final[,1:2], fontFamily = "arial", 
            fontWeight ="normal", color = pal_aaas(palette = "default")(10), 
            minRotation = 0, maxRotation = 0,
-           size = 0.7)
+           size = 0.8)
 # 
 # ggplot(final, aes(label = word, size = n)) +
 #   geom_text_wordcloud() +

@@ -18,11 +18,17 @@ pdfCorpus %>%
   summarise(n()) %>% 
   print(n = Inf)
 
-# data(stop_words)
+data(stop_words)
 
 paper_words <- mutate(pdfCorpus, text = gsub(x = word, pattern = "[0-9]+|[[:punct:]]|\\(.*\\)", replacement = "")) %>%
   unnest_tokens(input = text, output = word) %>%
-  # filter(!word %in% c(stop_words$word, "et", "al", "doi", "de", "fig", "figure", "data", "table", "cm", "uk", "jordi", "es")) %>% 
+  filter(!word %in% c(stop_words$word)) %>%
+  filter(!word %in% c("et", "al", "doi", "de", "fig", "figure", "data", "table", "uk", "jordi", "es")) %>%
+  filter(!word %in% c("https", "pp", "dfss", "doiorg",
+                      "creative", "commons", "license","https", "gb",
+                      "csic","online", "library", "wiley",
+                      "agupubsonlinelibrarywileycom","downloaded",
+                      "governed", "conditions", "terms", "urici", "central", "oa", "oficialia", "onlinelibrarywileycom","organización")) %>%
   count(paper, word, sort = TRUE)
 
 total_words <- paper_words %>% 

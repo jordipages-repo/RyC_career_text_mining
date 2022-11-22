@@ -8,7 +8,7 @@ library(forcats)
 all_pdfs <- list.files(path = "pdfs/",
                        pattern = ".pdf$")
 
-papers_bigrams <- map_df(all_pdfs, ~ data_frame(txt = pdf_text(paste("pdfs/", .x, sep = ""))) %>%
+papers_bigrams <- map_df(all_pdfs[-33], ~ data_frame(txt = pdf_text(paste("pdfs/", .x, sep = ""))) %>%
                       mutate(paper = .x) %>%
                       unnest_tokens(bigram, txt, token = "ngrams", n = 2))
 
@@ -32,7 +32,21 @@ bigrams_filtered <- bigrams_separated %>%
 bigram_counts <- bigrams_filtered %>% 
   count(word1, word2, sort = TRUE)
 
-bigram_counts
+bigram_counts %>% 
+  unite(bigram, word1, word2, sep = " ") %>% 
+  slice_max(n, n = 15) %>% 
+  ggplot(aes(y = n, x = fct_reorder(bigram, n))) +
+  geom_bar(stat = "identity", fill = "#1F77B4FF") +
+  xlab("") +
+  ylab("Frecuencia absoluta") +
+  coord_flip() +
+  theme_bw() +
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        text = element_text(size = 20))
+# ggsave(filename = "Figs/bigramsTODO.png", width = 1920, height = 1080, units = "px")
+
 
 bigrams_united <- bigrams_filtered %>%
   unite(bigram, word1, word2, sep = " ")
@@ -45,6 +59,20 @@ bigram_tf_idf <- bigrams_united %>%
   arrange(desc(tf_idf))
 bigram_tf_idf
 
+bigram_tf_idf %>%
+  slice_max(tf_idf, n = 15) %>%
+  ggplot(aes(tf_idf, fct_reorder(bigram, tf_idf))) +
+  geom_col(show.legend = FALSE) +
+  scale_fill_manual(values = "#008B45FF") +
+  labs(x = "tf-idf", y = NULL) +
+  theme_bw() +
+  theme(legend.position = "none",
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        text = element_text(size = 11))
+
+
+
 papers <- unique(bigram_tf_idf$paper)
 for(i in 1:length(papers)){
 plot <- bigram_tf_idf %>%
@@ -54,7 +82,7 @@ plot <- bigram_tf_idf %>%
   # ungroup() %>%
   ggplot(aes(tf_idf, fct_reorder(bigram, tf_idf), fill = paper)) +
   geom_col(show.legend = FALSE) +
-  scale_fill_manual(values = "#008B45FF") +
+  scale_fill_manual(values = "#3B4992FF") +
   # facet_wrap(~paper, ncol = 2, scales = "free") +
   labs(x = "tf-idf", y = NULL) +
   theme_bw() +
